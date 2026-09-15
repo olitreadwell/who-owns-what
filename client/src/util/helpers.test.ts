@@ -256,3 +256,25 @@ describe("formatHpdContactAddress(), ()", () => {
     });
   });
 });
+
+describe("formatPhoneNumber()", () => {
+  it("formats a full 10-digit number", () => {
+    expect(helpers.formatPhoneNumber("5556667777")).toBe("(555) 666-7777");
+  });
+
+  it("strips non-numeric characters before formatting", () => {
+    expect(helpers.formatPhoneNumber("(555) 666-7777")).toBe("(555) 666-7777");
+  });
+
+  it("keeps only the first 10 digits", () => {
+    expect(helpers.formatPhoneNumber("155566677778888")).toBe("(155) 566-6777");
+  });
+
+  it("formats a partial number as the user types", () => {
+    expect(helpers.formatPhoneNumber("555666")).toBe("(555) 666");
+  });
+
+  it("returns an empty string for empty input", () => {
+    expect(helpers.formatPhoneNumber("")).toBe("");
+  });
+});
