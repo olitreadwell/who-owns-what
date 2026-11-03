@@ -1,4 +1,5 @@
 @import "_vars.scss";
+@import "_typography.scss";
 
 .StandalonePage {
   div.page-container {
@@ -34,7 +35,7 @@
       margin: 2rem 0;
 
       width: 464px;
-      padding: 3rem 4rem;
+      padding: 2rem 4rem;
       @include for-phone-only() {
         width: 100%;
         padding: 1.5rem;
@@ -50,7 +51,8 @@
 
       h1,
       h2,
-      p {
+      p:not(.code-entry-resend):not(.code-entry-error),
+      .code-entry-label {
         margin: 0;
         text-align: left;
         &,
@@ -64,46 +66,38 @@
       }
 
       h2,
-      p {
+      p,
+      .code-entry-label {
         &,
         a {
           font-size: 0.875rem;
         }
       }
 
-      h1 + h2 {
+      h1 + h2,
+      h1 + .code-entry-label {
         margin-top: 1rem;
       }
 
       .input-group,
-      .email-input-field + .password-input-field,
       .jfcl-button.jfcl-variant-primary {
         margin-top: 1.5rem;
       }
 
-      .send-new-link,
+      .code-entry.input-group {
+        margin-top: unset;
+      }
+
       .jfcl-button {
         width: 100%;
       }
 
-      // reset password link to forgot pw, should redesign..
       a.jfcl-button {
         text-decoration: none;
       }
 
-      .didnt-get-link {
-        margin-top: 1rem;
-      }
-
-      .send-new-link-container {
-        margin-top: 1.5rem;
-      }
-
       .standalone-footer,
-      .login-footer,
-      .unsubscribe-footer,
-      .address-page-link,
-      .district-page-link {
+      .login-footer {
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -123,16 +117,33 @@
         }
       }
 
-      .address-page-link,
-      .district-page-link {
+      .standalone-footer {
         text-align: left;
-        a {
-          color: $justfix-black;
-          svg {
-            rotate: 180deg;
-            margin-right: 10px;
-            height: 1em;
-            vertical-align: -0.125em;
+      }
+
+      .Login--with-map {
+        margin: -3rem -4rem 0;
+
+        .login-map {
+          background-color: $justfix-grey-50;
+        }
+
+        .login-map__img {
+          display: block;
+          width: 100%;
+          height: 12.5rem; // 200px
+          object-fit: cover;
+        }
+
+        .login-body {
+          padding: 2rem 3rem 0;
+        }
+
+        @include for-phone-only() {
+          margin: -1.5rem -1.5rem 0;
+
+          .login-body {
+            padding: 1.5rem 1.5rem 0;
           }
         }
       }
@@ -145,6 +156,75 @@
       a {
         font-size: 0.875rem;
       }
+    }
+  }
+
+  &.LoginPage--from-building-alerts,
+  &#VerifyEmailPage {
+    div.page-container .standalone-container {
+      font-family: $body-font;
+
+      .jfcl-button,
+      .jfcl-button__label,
+      .jfcl-link,
+      .jf-alert,
+      .jfcl-radio-button__label,
+      input,
+      button,
+      label,
+      a {
+        font-family: inherit;
+      }
+
+      h1 {
+        font-size: 2rem; // 32px
+        font-weight: 600;
+        line-height: 100%;
+      }
+
+      h2,
+      p,
+      .code-entry-label,
+      label,
+      input,
+      .jfcl-button,
+      .step-progress,
+      .standalone-footer {
+        font-size: 1.125rem;
+        font-weight: 500;
+        line-height: 120%;
+      }
+
+      h2 a,
+      p a,
+      .code-entry-label a,
+      .standalone-footer a {
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+      }
+
+      .standalone-footer {
+        margin-top: 0.75rem;
+      }
+
+      label,
+      input,
+      .jfcl-button,
+      .step-progress {
+        letter-spacing: 0.54px;
+      }
+
+      h1 + h2,
+      h1 + .code-entry-label {
+        margin-top: 0.75rem;
+      }
+    }
+  }
+
+  &.LoginPage--from-building-alerts {
+    div.page-container .standalone-container {
+      background-color: $justfix-blue-100; // #c6d8ff
     }
   }
 }

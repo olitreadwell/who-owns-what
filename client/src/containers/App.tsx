@@ -45,11 +45,10 @@ import { StickyModal } from "components/StickyModal";
 import { DeprecationModal } from "components/DeprecationModal";
 import { UserContext, UserContextProvider } from "components/UserContext";
 import AccountSettingsPage from "./AccountSettingsPage";
-import ResetPasswordPage from "./ResetPasswordPage";
-import ForgotPasswordPage from "./ForgotPasswordPage";
 import UnsubscribePage from "./UnsubscribePage";
 import LoginPage from "./LoginPage";
 import { JFLogo } from "components/JFLogo";
+import { LoginBanner } from "components/LoginBanner";
 import { STANDALONE_PAGES } from "components/StandalonePage";
 import { JFLogoDivider } from "components/JFLogoDivider";
 import { LoadingPage } from "components/Loader";
@@ -116,8 +115,16 @@ const WhoOwnsWhatRoutes: React.FC<{}> = () => {
   const allowChangingPortfolioMethod =
     process.env.REACT_APP_ENABLE_NEW_WOWZA_PORTFOLIO_MAPPING === "1";
 
-  const localizedRedirect = (pathname: string) => {
-    return <LocaleRedirect to={{ pathname: removeLocalePrefix(pathname) }} />;
+  const localizedRedirect = (pathname: string, search?: string) => {
+    return <LocaleRedirect to={{ pathname: removeLocalePrefix(pathname), search }} />;
+  };
+
+  const redirectForgotResetToLogin = (locationSearch: string) => {
+    const incoming = new URLSearchParams(locationSearch);
+    const outgoing = new URLSearchParams({ from: "password" });
+    const email = incoming.get("email");
+    if (email) outgoing.set("email", email);
+    return localizedRedirect(paths.account.login, `?${outgoing.toString()}`);
   };
 
   return (
@@ -223,8 +230,14 @@ const WhoOwnsWhatRoutes: React.FC<{}> = () => {
           )
         }
       />
-      <Route path={paths.account.forgotPassword} component={ForgotPasswordPage} />
-      <Route path={paths.account.resetPassword} component={ResetPasswordPage} />
+      <Route
+        path={paths.account.forgotPassword}
+        render={({ location }) => redirectForgotResetToLogin(location.search)}
+      />
+      <Route
+        path={paths.account.resetPassword}
+        render={({ location }) => redirectForgotResetToLogin(location.search)}
+      />
       <Route path={paths.account.unsubscribe} component={UnsubscribePage} />
       <Route path={paths.about} component={AboutPage} />
       <Route path={paths.legacy.about} component={AboutPage} />
@@ -252,7 +265,7 @@ const SearchLink = () => {
 
   return (
     <LocaleNavLink exact to={searchRoute} key={1}>
-      <Trans>Search</Trans>
+      <Trans>Portfolio Search</Trans>
     </LocaleNavLink>
   );
 };
@@ -384,6 +397,14 @@ const AppBody = () => {
   );
 };
 
+const AccountSettingsBanner = () => {
+  const { pathname } = useLocation();
+  if (removeLocalePrefix(pathname) !== "/account/settings") {
+    return null;
+  }
+  return <LoginBanner />;
+};
+
 const App = () => {
   const version = process.env.REACT_APP_VERSION;
   const surveyId = process.env.REACT_APP_WOAU_SURVEY_ID;
@@ -426,6 +447,7 @@ const App = () => {
           <UserContextProvider>
             <div className="App">
               <Navbar />
+              <AccountSettingsBanner />
               {deprecationModalEnabled && <DeprecationModal />}
               <AppBody />
               {surveyId && surveyCookie !== "2" && (

@@ -12,14 +12,7 @@ import { useLocation } from "react-router-dom";
 
 const BRANCH_NAME = process.env.REACT_APP_BRANCH;
 
-export const STANDALONE_PAGES = [
-  "forgot-password",
-  "login",
-  "verify-email",
-  "forgot-password",
-  "reset-password",
-  "unsubscribe",
-];
+export const STANDALONE_PAGES = ["login", "verify-email", "unsubscribe"];
 
 export const JustFixLogoLink = (props: { eventParams: any }) => {
   const { home } = createWhoOwnsWhatRoutePaths();
@@ -76,10 +69,11 @@ type StandalonePageProps = withI18nProps & {
   children: React.ReactNode;
   className?: string;
   id?: string;
+  banner?: React.ReactNode;
 };
 
 const StandalonePage = withI18n()((props: StandalonePageProps) => {
-  const { title, className, id, children } = props;
+  const { title, className, id, children, banner } = props;
   const { pathname } = useLocation();
   const pageName = STANDALONE_PAGES.find((x) => pathname.includes(x));
   const eventParams = { from: pageName };
@@ -87,6 +81,7 @@ const StandalonePage = withI18n()((props: StandalonePageProps) => {
   return (
     <Page title={title}>
       <div className={classNames("StandalonePage Page", className)} id={id}>
+        {banner}
         <div className="page-container">
           <JustFixLogoLink eventParams={eventParams} />
           <div className="standalone-container">{children}</div>

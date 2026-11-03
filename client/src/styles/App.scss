@@ -50,6 +50,9 @@
   padding: 0.31rem 0.94rem;
   color: $wowza-dark;
   position: relative;
+  width: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
 
   .close-button {
     color: $wowza-dark;
@@ -80,6 +83,7 @@
     // Override default <p> styling:
     p {
       margin-bottom: 0;
+      font-size: 0.875rem;
     }
 
     a,
@@ -87,6 +91,11 @@
       color: $wowza-dark;
       text-decoration: underline;
       font-weight: 700;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: inline;
 
       &:hover,
       &:focus {
@@ -96,6 +105,18 @@
   }
 
   background-color: $wowza-warning;
+}
+
+.otp-login-modal {
+  @include for-tablet-landscape-up {
+    h5 {
+      font-size: 1.75rem; // 28px
+    }
+
+    p {
+      font-size: 1.125rem; // 18px
+    }
+  }
 }
 
 .App__header {
@@ -229,10 +250,48 @@
     font-family: $body-font;
 
     .App__header-brand,
-    .page-title,
-    nav a,
-    nav button {
+    .page-title {
       font-family: $body-font;
+    }
+
+    h1.page-title {
+      font-size: 1.125rem;
+    }
+
+    nav a,
+    nav button,
+    button.btn.btn-link.dropdown-toggle {
+      @include jfcl-body-standard-desktop-degular-text;
+      text-underline-position: from-font;
+
+      &:hover,
+      &:focus {
+        color: $justfix-grey-600;
+      }
+    }
+
+    &.wowza-styling {
+      nav a,
+      nav button,
+      button.btn.btn-link.dropdown-toggle {
+        &:hover,
+        &:focus {
+          color: $justfix-grey-600;
+          text-decoration: underline;
+        }
+      }
+
+      @include for-tablet-landscape-up {
+        nav a,
+        nav button,
+        button.btn.btn-link.dropdown-toggle {
+          &:hover,
+          &:focus {
+            color: $justfix-grey-600;
+            text-decoration: underline;
+          }
+        }
+      }
     }
   }
 }
@@ -278,6 +337,13 @@ div.Page {
     width: min(calc(100vw - 2.5rem), 37.5rem);
     max-width: 37.5rem;
     margin: 2.5rem auto;
+    box-sizing: border-box;
+
+    @include for-phone-only() {
+      width: auto;
+      max-width: none;
+      margin: 2.5rem 1rem;
+    }
 
     form {
       display: flex;

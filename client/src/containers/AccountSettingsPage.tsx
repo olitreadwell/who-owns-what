@@ -8,7 +8,7 @@ import "styles/AccountSettingsPage.css";
 import "styles/UserSetting.css";
 import Page from "components/Page";
 import { UserContext } from "components/UserContext";
-import { EmailSettingField, PasswordSettingField } from "components/UserSettingField";
+import { EmailSettingField } from "components/UserSettingField";
 import { DistrictSubscription, JustfixUser } from "state-machine";
 import { createRouteForAddressPage, createWhoOwnsWhatRoutePaths } from "routes";
 import { Borough } from "components/APIDataTypes";
@@ -21,11 +21,24 @@ type BuildingSubscriptionFieldProps = withI18nProps & {
   housenumber: string;
   streetname: string;
   boro: string;
+  housenumber_display?: string;
+  streetname_display?: string;
   onRemoveClick: (bbl: string) => void;
 };
 
 const BuildingSubscriptionFieldWithoutI18n = (props: BuildingSubscriptionFieldProps) => {
-  const { bbl, housenumber, streetname, boro, onRemoveClick, i18n } = props;
+  const {
+    bbl,
+    housenumber,
+    streetname,
+    boro,
+    housenumber_display,
+    streetname_display,
+    onRemoveClick,
+    i18n,
+  } = props;
+  const displayHn = housenumber_display || housenumber;
+  const displaySn = streetname_display || streetname;
   return (
     <div className="subscription-field">
       <a
@@ -39,11 +52,11 @@ const BuildingSubscriptionFieldWithoutI18n = (props: BuildingSubscriptionFieldPr
         rel="noreferrer noopener"
       >
         {/* title case styling via css only works if address is lowercase */}
-        <span className="street-address">{`${housenumber} ${helpers.titleCase(streetname)},`}</span>
+        <span className="street-address">{`${displayHn} ${helpers.titleCase(displaySn)},`}</span>
         <span>{`${helpers.titleCase(boro)}, NY`}</span>
       </a>
       <Button
-        type="submit"
+        type="button"
         variant="secondary"
         size="small"
         labelText={i18n._(t`Remove`)}
@@ -68,7 +81,7 @@ const DistrictSubscriptionFieldWithoutI18n = (props: DistrictSubscriptionFieldPr
         {district.map((area, i) => helpers.formatTranslatedAreaLabel(area, i18n, false)).join(", ")}
       </span>
       <Button
-        type="submit"
+        type="button"
         variant="secondary"
         size="small"
         labelText={i18n._(t`Remove`)}
@@ -85,11 +98,6 @@ const AccountSettingsPage = withI18n()((props: withI18nProps) => {
   const { home, areaAlerts } = createWhoOwnsWhatRoutePaths();
   const { pathname, state: locationState } = useLocation();
   const userContext = useContext(UserContext);
-  if (!userContext.user) return <div />;
-  const user = userContext.user as JustfixUser;
-  const { email, buildingSubscriptions, districtSubscriptions } = user;
-  const buildingSubscriptionsNumber = buildingSubscriptions?.length || 0;
-  const districtSubscriptionsNumber = districtSubscriptions?.length || 0;
 
   const [justSubscribed, setJustSubscribed] = React.useState(false);
   const [justLoggedIn, setJustLoggedIn] = React.useState(false);
@@ -109,6 +117,12 @@ const AccountSettingsPage = withI18n()((props: withI18nProps) => {
   const buildingSectionRef = useRef<HTMLDivElement>(null);
   const alertSectionRef = useRef<HTMLDivElement>(null);
 
+  if (!userContext.user) return <div />;
+  const user = userContext.user as JustfixUser;
+  const { email, buildingSubscriptions, districtSubscriptions } = user;
+  const buildingSubscriptionsNumber = buildingSubscriptions?.length || 0;
+  const districtSubscriptionsNumber = districtSubscriptions?.length || 0;
+
   const unsubscribeBuilding = (bbl: string) => {
     userContext.unsubscribeBuilding(bbl);
     window.gtag("event", "unsubscribe-building", {
@@ -119,7 +133,7 @@ const AccountSettingsPage = withI18n()((props: withI18nProps) => {
   };
   const unsubscribeDistrict = (subscriptionId: string) => {
     userContext.unsubscribeDistrict(subscriptionId);
-    window.gtag("event", "unsubscribe-building", {
+    window.gtag("event", "unsubscribe-district", {
       user_id: user.id,
       user_type: user.type,
       from: "account settings",
@@ -169,15 +183,7 @@ const AccountSettingsPage = withI18n()((props: withI18nProps) => {
                 onClick={() => userContext.logout(pathname)}
               />
             </div>
-            <EmailSettingField
-              currentValue={email}
-              onSubmit={(newEmail: string) => userContext.updateEmail(newEmail)}
-            />
-            <PasswordSettingField
-              onSubmit={(currentPassword: string, newPassword: string) =>
-                userContext.updatePassword(currentPassword, newPassword)
-              }
-            />
+            <EmailSettingField currentValue={email} />
           </div>
           <div className="settings-section">
             <Trans render="h2">Building Alerts</Trans>
